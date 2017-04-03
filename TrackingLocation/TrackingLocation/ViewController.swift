@@ -10,6 +10,9 @@ class ViewController: UIViewController {
     var logger = LocationLogger()
     var currentPolyline: MKPolyline?
     var currentBackgroundPolyline: MKPolyline?
+    
+    var isShowNotification = false
+    var visitLocation : CLLocation?
 
     var circles: [MKCircle] = []
     
@@ -18,7 +21,6 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         BackgroundDebug().print()
-
     }
     
     @IBAction func start(_ sender: Any) {
@@ -70,11 +72,26 @@ class ViewController: UIViewController {
             }
         }
     }
-
     
     var isCenter = false
     
     private func updateBackgroundLocation(location: CLLocation) {
+        
+        if visitLocation == nil {
+            visitLocation = location
+        }
+        else if let visit = visitLocation, visit.distance(from: location) > BackgroundLocationManager.RegionConfig.regionRadius {
+            
+            let time = location.timestamp.timeIntervalSince1970 - visit.timestamp.timeIntervalSince1970
+            
+            if time > (60*2) {
+                isShowNotification = false
+                self.showNotification("left \(location.coordinate.latitude) :: \(location.coordinate.longitude) leftDate \(location.timestamp) ")
+            }
+            
+            visitLocation = location
+        }
+        
         backgroundLocations.append(location)
         
         if let polyline = currentBackgroundPolyline {
@@ -89,6 +106,21 @@ class ViewController: UIViewController {
     }
     
     private func updateLocation(location: CLLocation) {
+        
+        if let visitLocation = visitLocation {
+            
+            let time = location.timestamp.timeIntervalSince1970 - visitLocation.timestamp.timeIntervalSince1970
+            
+            if time > (60*2), isShowNotification == false {
+                isShowNotification = true
+                
+                self.showNotification("arrival \(visitLocation.coordinate.latitude) :: \(visitLocation.coordinate.longitude) arrivalDate \(visitLocation.timestamp)")
+                
+                let annotation = MapAnnotation.init(title: "date \(visitLocation.timestamp)", coordinate: visitLocation.coordinate)
+                mapView.addAnnotation(annotation)
+            }
+        }
+        
         locations.append(location)
         
         if let polyline = currentPolyline {
@@ -155,6 +187,14 @@ class ViewController: UIViewController {
 
     }
 
+    func showNotification(_ message : String)  {
+        let localNotification = UILocalNotification()
+        localNotification.alertBody =  message
+        localNotification.soundName = UILocalNotificationDefaultSoundName
+        localNotification.fireDate = Date()
+        UIApplication.shared.scheduleLocalNotification(localNotification)
+        
+    }
 }
 
 extension ViewController: MKMapViewDelegate {
@@ -177,4 +217,27 @@ extension ViewController: MKMapViewDelegate {
         return renderer
     }
 
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        guard !annotation.isKind(of: MKUserLocation.self) else {
+            return nil
+        }
+        
+        let reuseIdentifier = "annotationIdentifier"
+        
+        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseIdentifier)
+        
+        if annotationView == nil {
+            annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: reuseIdentifier)
+            annotationView?.canShowCallout = true
+        }
+        else {
+            annotationView?.annotation = annotation
+        }
+        
+        if let mapAnnotation = annotation as? MapAnnotation {
+            annotationView?.image = UIImage.init(named: "pin_icon")
+        }
+        
+        return annotationView
+    }
 }

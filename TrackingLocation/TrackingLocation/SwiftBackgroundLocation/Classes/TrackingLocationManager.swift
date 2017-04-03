@@ -14,7 +14,7 @@ final public class TrackingLocationManager: NSObject {
     
     fileprivate lazy var locationManager: CLLocationManager = {
         let manager = CLLocationManager()
-        manager.distanceFilter = 100
+//        manager.distanceFilter = 10
         manager.desiredAccuracy = kCLLocationAccuracyBest
         manager.requestAlwaysAuthorization()
         manager.allowsBackgroundLocationUpdates = true

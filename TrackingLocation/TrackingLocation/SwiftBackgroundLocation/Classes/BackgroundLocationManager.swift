@@ -58,7 +58,7 @@ final public class BackgroundLocationManager: NSObject {
 
     public struct RegionConfig {
         public static let distanceToAroundRegions = regionRadius*Double(maximumNumberOfRegions)/Double.pi
-        public static let regionRadius = 30.0
+        public static let regionRadius = 80.0
         public static let maximumNumberOfRegions = 20
     }
 }

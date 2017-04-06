@@ -11,7 +11,7 @@ class ViewController: UIViewController {
     var currentPolyline: MKPolyline?
     var currentBackgroundPolyline: MKPolyline?
     
-    var isShowNotification = false
+    var regionLocation : CLLocation?
     var visitLocation : CLLocation?
 
     var circles: [MKCircle] = []
@@ -23,6 +23,13 @@ class ViewController: UIViewController {
         BackgroundDebug().print()
     }
     
+    private func stringFromDate(date:Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+        return formatter.string(from: date)
+    }
+    
     @IBAction func start(_ sender: Any) {
         startTracking()
     }
@@ -32,8 +39,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func stop(_ sender: Any) {
-        appDelagete().locationManager.stop()
-        appDelagete().backgroundLocationManager.stop()
+        self.stopTracking()
     }
     
     @IBAction func clear(_ sender: Any) {
@@ -60,6 +66,10 @@ class ViewController: UIViewController {
     
     func startTracking() {
         drawRegions()
+        
+        // TODO: handle location start in background if need
+        // can call appDelagete().backgroundLocationManager.startBackground()
+        // replace startBackground() in AppDelegate by this function in ViewController
         appDelagete().backgroundLocationManager.start() { [unowned self] result in
             if case let .Success(location) = result {
                 self.updateBackgroundLocation(location: location)
@@ -73,24 +83,16 @@ class ViewController: UIViewController {
         }
     }
     
+    func stopTracking() {
+        appDelagete().locationManager.stop()
+        appDelagete().backgroundLocationManager.stop()
+    }
+    
     var isCenter = false
     
     private func updateBackgroundLocation(location: CLLocation) {
-        
-        if visitLocation == nil {
-            visitLocation = location
-        }
-        else if let visit = visitLocation, visit.distance(from: location) > BackgroundLocationManager.RegionConfig.regionRadius {
-            
-            let time = location.timestamp.timeIntervalSince1970 - visit.timestamp.timeIntervalSince1970
-            
-            if time > (60*2) {
-                isShowNotification = false
-                self.showNotification("left \(location.coordinate.latitude) :: \(location.coordinate.longitude) leftDate \(location.timestamp) ")
-            }
-            
-            visitLocation = location
-        }
+                
+        regionLocation = location
         
         backgroundLocations.append(location)
         
@@ -107,17 +109,38 @@ class ViewController: UIViewController {
     
     private func updateLocation(location: CLLocation) {
         
-        if let visitLocation = visitLocation {
+        if let region = regionLocation {
             
-            let time = location.timestamp.timeIntervalSince1970 - visitLocation.timestamp.timeIntervalSince1970
-            
-            if time > (60*2), isShowNotification == false {
-                isShowNotification = true
+            // compare region with location tracking if distance > distanceAroundRegion -> try to restart region monitor
+            // fix bug region not update, location not update
+            if location.horizontalAccuracy < BackgroundLocationManager.RegionConfig.regionRadius, region.distance(from: location) > BackgroundLocationManager.RegionConfig.regionRadius {
                 
-                self.showNotification("arrival \(visitLocation.coordinate.latitude) :: \(visitLocation.coordinate.longitude) arrivalDate \(visitLocation.timestamp)")
+                regionLocation = nil
+                self.stopTracking()
+                self.startTracking()
                 
-                let annotation = MapAnnotation.init(title: "date \(visitLocation.timestamp)", coordinate: visitLocation.coordinate)
-                mapView.addAnnotation(annotation)
+                if let _ = visitLocation {
+                    visitLocation = nil
+                    self.showNotification("left \(location.coordinate.latitude) :: \(location.coordinate.longitude) leftDate \(self.stringFromDate(date: location.timestamp)) ")
+                }
+            }
+            else if visitLocation == nil {
+                
+                let time = location.timestamp.timeIntervalSince1970 - region.timestamp.timeIntervalSince1970
+                
+                if time > (60*5) {
+                    
+                    // user can move 10-15m in region after that he stop
+                    // long-lat will be location
+                    // arrival time will be time in region
+                    
+                    visitLocation = location
+                    
+                    self.showNotification("arrival \(location.coordinate.latitude) :: \(location.coordinate.longitude) arrivalDate \(self.stringFromDate(date: region.timestamp))")
+                    
+                    let annotation = MapAnnotation.init(title: "date \(region.timestamp)", coordinate: location.coordinate)
+                    mapView.addAnnotation(annotation)
+                }
             }
         }
         

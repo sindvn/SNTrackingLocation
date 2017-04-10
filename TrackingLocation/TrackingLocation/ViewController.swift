@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     
     var regionLocation : CLLocation?
     var visitLocation : CLLocation?
+    var trackLocation : CLLocation?
 
     var circles: [MKCircle] = []
     
@@ -63,18 +64,28 @@ class ViewController: UIViewController {
         logger.removeLogFile()
     }
     
+    func startBackgroundTracking() {
+        appDelagete().backgroundLocationManager.startBackground() { [unowned self] result in
+            if case let .Success(location) = result {
+                self.updateBackgroundLocation(location: location)
+            }
+        }
+    }
     
-    func startTracking() {
+    private func startTracking() {
         drawRegions()
         
         // TODO: handle location start in background if need
         // can call appDelagete().backgroundLocationManager.startBackground()
         // replace startBackground() in AppDelegate by this function in ViewController
+        
+        self.startBackgroundTracking()
+        /*
         appDelagete().backgroundLocationManager.start() { [unowned self] result in
             if case let .Success(location) = result {
                 self.updateBackgroundLocation(location: location)
             }
-        }
+        }*/
         
         appDelagete().locationManager.start {[unowned self] result in
             if case let .Success(location) = result {
@@ -83,7 +94,7 @@ class ViewController: UIViewController {
         }
     }
     
-    func stopTracking() {
+    private func stopTracking() {
         appDelagete().locationManager.stop()
         appDelagete().backgroundLocationManager.stop()
     }
@@ -91,7 +102,16 @@ class ViewController: UIViewController {
     var isCenter = false
     
     private func updateBackgroundLocation(location: CLLocation) {
-                
+        
+        // restart location manager when it may be stop tracking
+        if let lastLocation = trackLocation, lastLocation.horizontalAccuracy < BackgroundLocationManager.RegionConfig.regionRadius, location.distance(from: lastLocation) > BackgroundLocationManager.RegionConfig.regionRadius {
+            
+            trackLocation = nil
+            regionLocation = nil
+            self.stopTracking()
+            self.startTracking()
+        }
+        
         regionLocation = location
         
         backgroundLocations.append(location)
@@ -109,11 +129,11 @@ class ViewController: UIViewController {
     
     private func updateLocation(location: CLLocation) {
         
-        if let region = regionLocation {
+        if let region = regionLocation, location.horizontalAccuracy < 50 {
             
             // compare region with location tracking if distance > distanceAroundRegion -> try to restart region monitor
             // fix bug region not update, location not update
-            if location.horizontalAccuracy < BackgroundLocationManager.RegionConfig.regionRadius, region.distance(from: location) > BackgroundLocationManager.RegionConfig.regionRadius {
+            if region.distance(from: location) > BackgroundLocationManager.RegionConfig.regionRadius {
                 
                 regionLocation = nil
                 self.stopTracking()
@@ -143,6 +163,8 @@ class ViewController: UIViewController {
                 }
             }
         }
+        
+        trackLocation = location
         
         locations.append(location)
         

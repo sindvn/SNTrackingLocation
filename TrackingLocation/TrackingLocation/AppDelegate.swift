@@ -12,11 +12,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if launchOptions?[UIApplicationLaunchOptionsKey.location] != nil {
             BackgroundDebug().write(string: "UIApplicationLaunchOptionsLocationKey")
             
+            if let vc = self.window?.rootViewController as? ViewController {
+                vc.startBackgroundTracking()
+            }
+            /*
             backgroundLocationManager.startBackground() { result in
                 if case let .Success(location) = result {
                     LocationLogger().writeLocationToFile(location: location)
                 }
-            }
+            }*/
         }
 
         application.registerUserNotificationSettings(UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil))

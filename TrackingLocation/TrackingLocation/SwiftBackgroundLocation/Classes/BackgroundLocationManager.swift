@@ -64,7 +64,7 @@ final public class BackgroundLocationManager: NSObject {
 }
 
 extension BackgroundLocationManager {
-    fileprivate func tryToRefreshPosition(listener: Listener? = nil) {
+    func tryToRefreshPosition(listener: Listener? = nil) {
         var lastLocation: CLLocation? = nil
         trackingLocationManager.requestLocation {[weak self] result in
             if case let .Success(location) = result {

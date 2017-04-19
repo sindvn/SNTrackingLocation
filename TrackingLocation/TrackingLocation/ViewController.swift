@@ -11,9 +11,9 @@ class ViewController: UIViewController {
     var currentPolyline: MKPolyline?
     var currentBackgroundPolyline: MKPolyline?
     
-    var regionLocation : CLLocation?
-    var visitLocation : CLLocation?
-    var trackLocation : CLLocation?
+    private var regionLocation : CLLocation?
+    private var visitLocation : CLLocation?
+    private var trackLocation : CLLocation?
 
     var circles: [MKCircle] = []
     
@@ -131,13 +131,22 @@ class ViewController: UIViewController {
         
         if let region = regionLocation, location.horizontalAccuracy < 50 {
             
-            // compare region with location tracking if distance > distanceAroundRegion -> try to restart region monitor
-            // fix bug region not update, location not update
+            // dont use region monitoring check when user enter regions around
+            // compare region with location tracking if distance > regionRadius -> get new region
+            // if cannot get new region (background region not update)
+            // -> user out region with distance > regionRadius*2 -> try to restart background manager to get new region
             if region.distance(from: location) > BackgroundLocationManager.RegionConfig.regionRadius {
                 
-                regionLocation = nil
-                self.stopTracking()
-                self.startTracking()
+                if region.distance(from: location) > BackgroundLocationManager.RegionConfig.regionRadius * 2 {
+                    // restart background manager when it may be stop tracking
+                    regionLocation = nil
+                    self.stopTracking()
+                    self.startTracking()
+                }
+                else {
+                    regionLocation = nil
+                    appDelagete().backgroundLocationManager.tryToRefreshPosition()
+                }
                 
                 if let _ = visitLocation {
                     visitLocation = nil

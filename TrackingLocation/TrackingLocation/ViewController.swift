@@ -2,252 +2,153 @@ import UIKit
 import MapKit
 
 class ViewController: UIViewController {
-
+    
     @IBOutlet weak var mapView: MKMapView!
-    var locations: [CLLocation] = []
-    var backgroundLocations: [CLLocation] = []
-
-    var logger = LocationLogger()
+    
+    var circles: [MKCircle] = []
+    
     var currentPolyline: MKPolyline?
     var currentBackgroundPolyline: MKPolyline?
     
-    private var regionLocation : CLLocation?
-    private var visitLocation : CLLocation?
-    private var trackLocation : CLLocation?
-
-    var circles: [MKCircle] = []
+    var locations: [Location] = []
+    var backgroundLocations: [Location] = []
+    
+    var locationVisit : Location?
+    var isFilter = false
+    
+    var locationFilter : LocationFilterProtocol!
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
     
     override func viewDidLoad() {
-        mapView.delegate = self
         super.viewDidLoad()
-        
-        BackgroundDebug().print()
+        self.mapView.delegate = self
+        self.mapView.userTrackingMode = .follow
+        TrackingService.shared.delegate = self
+        locationFilter = LocationFilter()
     }
     
-    private func stringFromDate(date:Date) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd HH:mm"
-        return formatter.string(from: date)
+    @IBAction func tapFilter(_ sender: Any) {
+        isFilter = true
+        self.clearDataMapView()
+        let (proccessedLocations, _) = locationFilter.filter(locations)
+        self.drawBackgroundPolyline(locations: proccessedLocations)
+        self.drawAnnotations(locations: locations, isFilter: false)
+        self.drawAnnotations(locations: proccessedLocations, isFilter: true)
     }
     
-    @IBAction func start(_ sender: Any) {
-        startTracking()
+    @IBAction func tapRaw(_ sender: Any) {
+        isFilter = false
+        self.clearDataMapView()
+        self.drawCurrentPolyline(locations: locations)
+        self.drawBackgroundPolyline(locations: backgroundLocations)
+        self.drawAnnotations(locations: locations, isFilter: false)
     }
     
-    var appDelagete = {
-        return UIApplication.shared.delegate as! AppDelegate
+    @IBAction func tapClear(_ sender: Any) {
+        self.clearDataMapView()
     }
     
-    @IBAction func stop(_ sender: Any) {
-        self.stopTracking()
+    @IBAction func tapStart(_ sender: Any) {
+        TrackingService.shared.start()
     }
     
-    @IBAction func clear(_ sender: Any) {
-        if let polyline = currentPolyline {
-            mapView.remove(polyline)
-        }
-        if let polyline = currentBackgroundPolyline {
-            mapView.remove(polyline)
-        }
+    @IBAction func tapStop(_ sender: Any) {
+        TrackingService.shared.stop()
     }
     
-    
-    @IBAction func readLog(_ sender: Any) {
-        if let locations = logger.readLocation() {
-            drawLocation(locations: locations)
-            centerCamera(to: locations.last!)
-        }
+    private func clearDataMapView() {
+        mapView.removeAnnotations(mapView.annotations)
+        mapView.removeOverlays(mapView.overlays)
     }
     
-    @IBAction func clearLog(_ sender: Any) {
-        logger.removeLogFile()
-    }
-    
-    func startBackgroundTracking() {
-        appDelagete().backgroundLocationManager.startBackground() { [unowned self] result in
-            if case let .Success(location) = result {
-                self.updateBackgroundLocation(location: location)
-            }
-        }
-    }
-    
-    private func startTracking() {
-        drawRegions()
+    func polyline(coords: [CLLocationCoordinate2D], title:String) -> MKPolyline {
         
-        // TODO: handle location start in background if need
-        // can call appDelagete().backgroundLocationManager.startBackground()
-        // replace startBackground() in AppDelegate by this function in ViewController
-        
-        self.startBackgroundTracking()
-        /*
-        appDelagete().backgroundLocationManager.start() { [unowned self] result in
-            if case let .Success(location) = result {
-                self.updateBackgroundLocation(location: location)
-            }
-        }*/
-        
-        appDelagete().locationManager.start {[unowned self] result in
-            if case let .Success(location) = result {
-                self.updateLocation(location: location)
-            }
-        }
-    }
-    
-    private func stopTracking() {
-        appDelagete().locationManager.stop()
-        appDelagete().backgroundLocationManager.stop()
-    }
-    
-    var isCenter = false
-    
-    private func updateBackgroundLocation(location: CLLocation) {
-        
-        // restart location manager when it may be stop tracking
-        if let lastLocation = trackLocation, lastLocation.horizontalAccuracy < BackgroundLocationManager.RegionConfig.regionRadius, location.distance(from: lastLocation) > BackgroundLocationManager.RegionConfig.regionRadius {
-            
-            trackLocation = nil
-            regionLocation = nil
-            self.stopTracking()
-            self.startTracking()
-        }
-        
-        regionLocation = location
-        
-        backgroundLocations.append(location)
-        
-        if let polyline = currentBackgroundPolyline {
-            mapView.remove(polyline)
-        }
-        
-        currentBackgroundPolyline = ViewController.polyline(locations: backgroundLocations, title: "regions")
-        mapView.add(currentBackgroundPolyline!)
-        
-        logger.writeLocationToFile(location: location)
-        
-    }
-    
-    private func updateLocation(location: CLLocation) {
-        
-        if let region = regionLocation, location.horizontalAccuracy < 50 {
-            
-            // dont use region monitoring check when user enter regions around
-            // compare region with location tracking if distance > regionRadius -> get new region
-            // if cannot get new region (background region not update)
-            // -> user out region with distance > regionRadius*2 -> try to restart background manager to get new region
-            if region.distance(from: location) > BackgroundLocationManager.RegionConfig.regionRadius {
-                
-                if region.distance(from: location) > BackgroundLocationManager.RegionConfig.regionRadius * 2 {
-                    // restart background manager when it may be stop tracking
-                    regionLocation = nil
-                    self.stopTracking()
-                    self.startTracking()
-                }
-                else {
-                    regionLocation = nil
-                    appDelagete().backgroundLocationManager.tryToRefreshPosition()
-                }
-                
-                if let _ = visitLocation {
-                    visitLocation = nil
-                    self.showNotification("left \(location.coordinate.latitude) :: \(location.coordinate.longitude) leftDate \(self.stringFromDate(date: location.timestamp)) ")
-                }
-            }
-            else if visitLocation == nil {
-                
-                let time = location.timestamp.timeIntervalSince1970 - region.timestamp.timeIntervalSince1970
-                
-                if time > (60*5) {
-                    
-                    // user can move 10-15m in region after that he stop
-                    // long-lat will be location
-                    // arrival time will be time in region
-                    
-                    visitLocation = location
-                    
-                    self.showNotification("arrival \(location.coordinate.latitude) :: \(location.coordinate.longitude) arrivalDate \(self.stringFromDate(date: region.timestamp))")
-                    
-                    let annotation = MapAnnotation.init(title: "date \(region.timestamp)", coordinate: location.coordinate)
-                    mapView.addAnnotation(annotation)
-                }
-            }
-        }
-        
-        trackLocation = location
-        
-        locations.append(location)
-        
-        if let polyline = currentPolyline {
-            mapView.remove(polyline)
-        }
-
-        drawLocation(locations: locations)
-        centerCamera(to: location)
-        
-    }
-    
-    private func centerCamera(to location: CLLocation) {
-        if !isCenter {
-            let camera = mapView.camera
-            camera.centerCoordinate = location.coordinate
-            
-            mapView.camera = camera
-            let viewRegion = MKCoordinateRegionMakeWithDistance(location.coordinate, 500, 500)
-            
-            mapView.setRegion(viewRegion, animated: true)
-            isCenter = true
-        }
-    }
-    
-    func drawLocation(locations: [CLLocation]) {
-        currentPolyline = ViewController.polyline(locations: locations, title: "location")
-        mapView.add(currentPolyline!)
-    }
-    
-    
-    static func polyline(locations: [CLLocation], title:String) -> MKPolyline {
-        var coords = [CLLocationCoordinate2D]()
-        
-        for location in locations {
-            coords.append(CLLocationCoordinate2D(latitude: location.coordinate.latitude,
-                                                 longitude: location.coordinate.longitude))
-        }
-        
-        let polyline = MKPolyline(coordinates: &coords, count: locations.count)
+        let polyline = MKPolyline(coordinates: coords, count: coords.count)
         polyline.title = title
         
         return polyline
     }
     
-    func drawRegions() {
-        appDelagete().backgroundLocationManager.addedRegionsListener = { result in
-            
-            if case let .Success(locations) = result {
-                
-                self.circles.forEach({ circle in
-                    self.mapView.remove(circle)
-                })
-                
-                locations.forEach({ location in
-                    let circle = MKCircle(center: location.coordinate, radius: BackgroundLocationManager.RegionConfig.regionRadius)
-                    circle.title = "regionPlanned"
-                    self.mapView.add(circle)
-                    self.circles.append(circle)
-                })
-                
-                
-            }
+    func drawCurrentPolyline(locations:[Location]) {
+        if let polyline = currentPolyline {
+            mapView.remove(polyline)
         }
-
+        var coords = [CLLocationCoordinate2D]()
+        locations.forEach { loc in
+            coords.append(CLLocationCoordinate2D(latitude:loc.latitude, longitude:loc.longitude))
+        }
+        currentPolyline = self.polyline(coords: coords, title: "location")
+        mapView.add(currentPolyline!)
     }
+    
+    func drawBackgroundPolyline(locations:[Location]) {
+        if let polyline = currentBackgroundPolyline {
+            mapView.remove(polyline)
+        }
+        var coords = [CLLocationCoordinate2D]()
+        locations.forEach { loc in
+            coords.append(CLLocationCoordinate2D(latitude:loc.latitude, longitude:loc.longitude))
+        }
+        currentBackgroundPolyline = self.polyline(coords: coords, title: "regions")
+        mapView.add(currentBackgroundPolyline!)
+    }
+    
+    func drawAnnotations(locations:[Location],isFilter:Bool) {
+        locations.forEach { loc in
+            if let arrivalDate = loc.arrivalTime {
+                let annotation = MapAnnotation.init(title: "date \(arrivalDate)", coordinate: CLLocationCoordinate2D(latitude:loc.latitude, longitude:loc.longitude), isAnnotationPickMap: isFilter)
+                mapView.addAnnotation(annotation)
+            }
+            
+        }
+    }
+}
 
-    func showNotification(_ message : String)  {
-        let localNotification = UILocalNotification()
-        localNotification.alertBody =  message
-        localNotification.soundName = UILocalNotificationDefaultSoundName
-        localNotification.fireDate = Date()
-        UIApplication.shared.scheduleLocalNotification(localNotification)
+extension ViewController : TrackingServiceDelegate {
+    
+    func didUpdateTrackingLocation(_ location: CLLocation) {
+        let locationData = Location(uuid: NSUUID().uuidString, longitude: location.coordinate.longitude, latitude: location.coordinate.latitude, horizontalAccuracy: location.horizontalAccuracy, createdAt: location.timestamp)
+        locations.append(locationData)
         
+        if isFilter == false {
+            self.drawCurrentPolyline(locations: locations)
+        }
+    }
+    
+    func didUpdateBackgroundLocation(_ location: CLLocation) {
+        let locationData = Location(uuid: NSUUID().uuidString, longitude: location.coordinate.longitude, latitude: location.coordinate.latitude, horizontalAccuracy: location.horizontalAccuracy, createdAt: location.timestamp)
+        backgroundLocations.append(locationData)
+        
+        if isFilter == false {
+            self.circles.forEach({ circle in
+                self.mapView.remove(circle)
+            })
+            let circle = MKCircle(center: location.coordinate, radius: BackgroundLocationManager.RegionConfig.regionRadius)
+            circle.title = "regionPlanned"
+            self.mapView.add(circle)
+            self.circles.append(circle)
+            
+            self.drawBackgroundPolyline(locations: backgroundLocations)
+        }
+    }
+    
+    func didDepartLocation(_ location: CLLocation, arrivalDate: Date, departureDate: Date) {
+        if let visit = locationVisit {
+            visit.departureTime = departureDate
+        }
+    }
+    
+    func didArrivalLocation(_ location: CLLocation, arrivalDate : Date) {
+        locationVisit = Location.init(uuid: NSUUID().uuidString, longitude: location.coordinate.longitude, latitude: location.coordinate.latitude, horizontalAccuracy: location.horizontalAccuracy, createdAt: location.timestamp, arrivalTime: arrivalDate, departureTime: nil, transport: nil, medias: nil)
+        locations.append(locationVisit!)
+        
+        if isFilter == false {
+            let annotation = MapAnnotation.init(title: "date \(arrivalDate)", coordinate: location.coordinate, isAnnotationPickMap: false)
+            mapView.addAnnotation(annotation)
+        }
     }
 }
 
@@ -270,7 +171,7 @@ extension ViewController: MKMapViewDelegate {
         
         return renderer
     }
-
+    
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         guard !annotation.isKind(of: MKUserLocation.self) else {
             return nil
@@ -288,8 +189,8 @@ extension ViewController: MKMapViewDelegate {
             annotationView?.annotation = annotation
         }
         
-        if let mapAnnotation = annotation as? MapAnnotation {
-            annotationView?.image = UIImage.init(named: "pin_icon")
+        if let annotation = annotation as? MapAnnotation {
+            annotationView?.image = annotation.isPickOnMap ? UIImage.init(named: "icon_annotation_green") : UIImage.init(named: "icon_annotation_blue")
         }
         
         return annotationView

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -22,40 +22,43 @@
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pb1-Re-U9G">
                                 <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <connections>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="YEb-BL-9uE"/>
+                                </connections>
                             </mapView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zpX-Rm-XPu">
                                 <rect key="frame" x="22" y="617" width="34" height="30"/>
                                 <state key="normal" title="Start"/>
                                 <connections>
-                                    <action selector="start:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ug5-1o-5VA"/>
+                                    <action selector="tapStart:" destination="BYZ-38-t0r" eventType="touchUpInside" id="gjG-Ue-XLj"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="E6e-16-Nsx">
                                 <rect key="frame" x="83" y="617" width="32" height="30"/>
                                 <state key="normal" title="Stop"/>
                                 <connections>
-                                    <action selector="stop:" destination="BYZ-38-t0r" eventType="touchUpInside" id="A1Y-Pb-cue"/>
+                                    <action selector="tapStop:" destination="BYZ-38-t0r" eventType="touchUpInside" id="fUz-I9-miA"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SG2-q4-LSa">
                                 <rect key="frame" x="127" y="617" width="70" height="30"/>
                                 <state key="normal" title="Clear map"/>
                                 <connections>
-                                    <action selector="clear:" destination="BYZ-38-t0r" eventType="touchUpInside" id="rS6-RH-knv"/>
+                                    <action selector="tapClear:" destination="BYZ-38-t0r" eventType="touchUpInside" id="tiY-EG-1nH"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mgf-R7-DSd">
-                                <rect key="frame" x="289" y="617" width="61" height="30"/>
-                                <state key="normal" title="Clear log"/>
+                                <rect key="frame" x="315" y="617" width="35" height="30"/>
+                                <state key="normal" title="Filter"/>
                                 <connections>
-                                    <action selector="clearLog:" destination="BYZ-38-t0r" eventType="touchUpInside" id="CO6-jM-zKi"/>
+                                    <action selector="tapFilter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="RTi-SB-hu2"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OU6-kz-f0e">
-                                <rect key="frame" x="263" y="579" width="96" height="30"/>
-                                <state key="normal" title="Read from log"/>
+                                <rect key="frame" x="320" y="579" width="30" height="30"/>
+                                <state key="normal" title="Raw"/>
                                 <connections>
-                                    <action selector="readLog:" destination="BYZ-38-t0r" eventType="touchUpInside" id="eJ4-fm-GYy"/>
+                                    <action selector="tapRaw:" destination="BYZ-38-t0r" eventType="touchUpInside" id="rdF-vf-w4g"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -66,7 +69,7 @@
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="E6e-16-Nsx" secondAttribute="bottom" constant="20" id="Bhx-gF-t08"/>
                             <constraint firstItem="E6e-16-Nsx" firstAttribute="leading" secondItem="zpX-Rm-XPu" secondAttribute="trailing" constant="27" id="HOp-wf-r4N"/>
                             <constraint firstAttribute="trailing" secondItem="Mgf-R7-DSd" secondAttribute="trailing" constant="25" id="ISA-kn-kh7"/>
-                            <constraint firstAttribute="trailing" secondItem="OU6-kz-f0e" secondAttribute="trailing" constant="16" id="IW6-UP-Ct2"/>
+                            <constraint firstAttribute="trailing" secondItem="OU6-kz-f0e" secondAttribute="trailing" constant="25" id="IW6-UP-Ct2"/>
                             <constraint firstItem="zpX-Rm-XPu" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="22" id="Ueb-x7-pS1"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="zpX-Rm-XPu" secondAttribute="bottom" constant="20" id="d9p-BL-IRg"/>
                             <constraint firstItem="pb1-Re-U9G" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="fpP-ud-2Nt"/>
@@ -78,7 +81,7 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="mapView" destination="pb1-Re-U9G" id="tLi-t4-cfZ"/>
+                        <outlet property="mapView" destination="pb1-Re-U9G" id="laN-Yi-ztv"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

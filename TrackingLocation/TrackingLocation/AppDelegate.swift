@@ -9,24 +9,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
         
-        if launchOptions?[UIApplicationLaunchOptionsKey.location] != nil {
-            BackgroundDebug().write(string: "UIApplicationLaunchOptionsLocationKey")
-            
-            if let vc = self.window?.rootViewController as? ViewController {
-                vc.startBackgroundTracking()
-            }
-            /*
-            backgroundLocationManager.startBackground() { result in
-                if case let .Success(location) = result {
-                    LocationLogger().writeLocationToFile(location: location)
-                }
-            }*/
-        }
+        self.handleLauchOptions(launchOptions: launchOptions)
 
         application.registerUserNotificationSettings(UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil))
         
         return true
     }
 
+    func handleLauchOptions(launchOptions:  [UIApplicationLaunchOptionsKey : Any]? = nil) {
+        guard let launchOptions = launchOptions  else {
+            return
+        }
+        
+        if launchOptions[UIApplicationLaunchOptionsKey.location] != nil {
+            TrackingService.shared.start()
+        }
+    }
 }
 

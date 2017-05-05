@@ -16,12 +16,12 @@ final public class BackgroundLocationManager: NSObject {
 
     fileprivate lazy var trackingLocationManager: TrackingLocationManager = TrackingLocationManager()
     
-    fileprivate lazy var locationManager: CLLocationManager = {
-        let manager = CLLocationManager()
-        manager.distanceFilter = kCLDistanceFilterNone
-        manager.desiredAccuracy = kCLLocationAccuracyBest
-        return manager
-    }()
+//    fileprivate lazy var locationManager: CLLocationManager = {
+//        let manager = CLLocationManager()
+//        manager.distanceFilter = kCLDistanceFilterNone
+//        manager.desiredAccuracy = kCLLocationAccuracyBest
+//        return manager
+//    }()
     
     
     public convenience override init() {
@@ -35,14 +35,11 @@ final public class BackgroundLocationManager: NSObject {
     
     public func start(backgroundTrackingListener: @escaping BackgroundTrackingListener) {
         listener = backgroundTrackingListener
-        locationManager.delegate = self
         tryToRefreshPosition()
     }
     
     public func startBackground(backgroundTrackingListener: @escaping BackgroundTrackingListener) {
         listener = backgroundTrackingListener
-
-        locationManager.delegate = self
         
         currentBGTask = UIApplication.shared.beginBackgroundTask(withName: bgTaskIdentifier) {[weak self] in
             self?.tryToRefreshPosition()
@@ -53,18 +50,15 @@ final public class BackgroundLocationManager: NSObject {
     
     public func stop() {
         listener = nil
-        locationManager.delegate = nil
     }
 
     public struct RegionConfig {
-        public static let distanceToAroundRegions = regionRadius*Double(maximumNumberOfRegions)/Double.pi
         public static let regionRadius = 80.0
-        public static let maximumNumberOfRegions = 20
     }
 }
 
 extension BackgroundLocationManager {
-    func tryToRefreshPosition(listener: Listener? = nil) {
+    func tryToRefreshPosition(listener: LocationListener? = nil) {
         var lastLocation: CLLocation? = nil
         trackingLocationManager.requestLocation {[weak self] result in
             if case let .Success(location) = result {
@@ -74,7 +68,7 @@ extension BackgroundLocationManager {
                 }()
                 
                 if !theSameLocation { //user doesnt change position
-                    self?.startMonitoring(for: location.coordinate)
+//                    self?.startMonitoring(for: location.coordinate)
                     self?.provideLocation(location: location)
                     lastLocation = location
                 }
@@ -84,45 +78,48 @@ extension BackgroundLocationManager {
         }
     }
     
+    /*
     fileprivate func startMonitoring(for coordinate: CLLocationCoordinate2D) {
-        clearRegions()
+//        clearRegions()
         
-        let val = 2*Double.pi/Double(RegionConfig.maximumNumberOfRegions)
+//        let val = 2*Double.pi/Double(RegionConfig.maximumNumberOfRegions)
         
         let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
         
         var locations:[CLLocation] = []
         locations.append(location)
         
-        var regions:[CLCircularRegion] = []
-        for i in 0..<RegionConfig.maximumNumberOfRegions {
-            let identifier = "\(Constants.suitName).regionIdentifier.\(i)"
-            let bearing = val*Double(i)
-            
-            let coordinate = coordinate.location(for: bearing, and: RegionConfig.distanceToAroundRegions)
-            
-            let region = CLCircularRegion(center: CLLocationCoordinate2D(latitude: coordinate.latitude,
-                                                                         longitude: coordinate.longitude),
-                                          radius: RegionConfig.regionRadius,
-                                          identifier: identifier)
-            
-            
-            regions.append(region)
-            let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
-            locations.append(location)
-            locationManager.startMonitoring(for: region)
-        }
-        
-        regionCache.saveRegionsCoordinates(regions: regions)
+//        var regions:[CLCircularRegion] = []
+//        for i in 0..<RegionConfig.maximumNumberOfRegions {
+//            let identifier = "\(Constants.suitName).regionIdentifier.\(i)"
+//            let bearing = val*Double(i)
+//            
+//            let coordinate = coordinate.location(for: bearing, and: RegionConfig.distanceToAroundRegions)
+//            
+//            let region = CLCircularRegion(center: CLLocationCoordinate2D(latitude: coordinate.latitude,
+//                                                                         longitude: coordinate.longitude),
+//                                          radius: RegionConfig.regionRadius,
+//                                          identifier: identifier)
+//            
+//            
+//            regions.append(region)
+//            let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+//            locations.append(location)
+//            locationManager.startMonitoring(for: region)
+//        }
+//        
+//        regionCache.saveRegionsCoordinates(regions: regions)
         
         addedRegionsListener?(Result.Success(locations))
     }
+ 
+ */
     
-    fileprivate func clearRegions() {
-        locationManager.monitoredRegions.forEach { region in
-            locationManager.stopMonitoring(for: region)
-        }
-    }
+//    fileprivate func clearRegions() {
+//        locationManager.monitoredRegions.forEach { region in
+//            locationManager.stopMonitoring(for: region)
+//        }
+//    }
     
     fileprivate func provideLocation(location: CLLocation) {
         listener?(Result.Success(location))
@@ -143,7 +140,7 @@ extension BackgroundLocationManager: CLLocationManagerDelegate {
 
         self.tryToRefreshPosition() {[weak self] result in
             if case .Error(_) = result {
-                self?.startMonitoring(for: coordinates)
+//                self?.startMonitoring(for: coordinates)
                 self?.provideLocation(location: location)
             }
         }

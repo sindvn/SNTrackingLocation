@@ -7,14 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		847E3E4E1EBC19A600C16905 /* BackgroundLocationCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E3E461EBC19A600C16905 /* BackgroundLocationCache.swift */; };
-		847E3E4F1EBC19A600C16905 /* BackgroundLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E3E471EBC19A600C16905 /* BackgroundLocationManager.swift */; };
-		847E3E501EBC19A600C16905 /* BackgroundTrackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E3E481EBC19A600C16905 /* BackgroundTrackable.swift */; };
-		847E3E511EBC19A600C16905 /* CLLocationCoordinate2D+Distance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E3E491EBC19A600C16905 /* CLLocationCoordinate2D+Distance.swift */; };
-		847E3E521EBC19A600C16905 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E3E4A1EBC19A600C16905 /* Result.swift */; };
-		847E3E531EBC19A600C16905 /* TrackingLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E3E4B1EBC19A600C16905 /* TrackingLocationManager.swift */; };
-		847E3E541EBC19A600C16905 /* VisitLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E3E4C1EBC19A600C16905 /* VisitLocationManager.swift */; };
-		847E3E551EBC19A600C16905 /* VisitLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E3E4D1EBC19A600C16905 /* VisitLogger.swift */; };
+		843A00E61EC58C410052EED4 /* TrackingLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843A00E31EC58C410052EED4 /* TrackingLocationManager.swift */; };
+		843A00E71EC58C410052EED4 /* VisitLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843A00E41EC58C410052EED4 /* VisitLocationManager.swift */; };
+		843A00E81EC58C410052EED4 /* VisitLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843A00E51EC58C410052EED4 /* VisitLogger.swift */; };
+		846FE97E1EC14BB200EEE873 /* MKPolylineZoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846FE97D1EC14BB200EEE873 /* MKPolylineZoom.swift */; };
+		846FE9841EC14C6100EEE873 /* IVBezierPathRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 846FE9811EC14C6100EEE873 /* IVBezierPathRenderer.m */; };
+		846FE9851EC14C6100EEE873 /* UIBezierPath+GuidedPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 846FE9831EC14C6100EEE873 /* UIBezierPath+GuidedPath.m */; };
 		847E3E571EBC1AD400C16905 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E3E561EBC1AD400C16905 /* Config.swift */; };
 		847E3E5B1EBC1CEA00C16905 /* LocationFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E3E5A1EBC1CEA00C16905 /* LocationFilter.swift */; };
 		847E3E611EBC1E4100C16905 /* MotionActivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E3E601EBC1E4100C16905 /* MotionActivityService.swift */; };
@@ -36,23 +34,24 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		847E3E461EBC19A600C16905 /* BackgroundLocationCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundLocationCache.swift; sourceTree = "<group>"; };
-		847E3E471EBC19A600C16905 /* BackgroundLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundLocationManager.swift; sourceTree = "<group>"; };
-		847E3E481EBC19A600C16905 /* BackgroundTrackable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundTrackable.swift; sourceTree = "<group>"; };
-		847E3E491EBC19A600C16905 /* CLLocationCoordinate2D+Distance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CLLocationCoordinate2D+Distance.swift"; sourceTree = "<group>"; };
-		847E3E4A1EBC19A600C16905 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
-		847E3E4B1EBC19A600C16905 /* TrackingLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackingLocationManager.swift; sourceTree = "<group>"; };
-		847E3E4C1EBC19A600C16905 /* VisitLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VisitLocationManager.swift; sourceTree = "<group>"; };
-		847E3E4D1EBC19A600C16905 /* VisitLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VisitLogger.swift; sourceTree = "<group>"; };
+		843A00E31EC58C410052EED4 /* TrackingLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackingLocationManager.swift; sourceTree = "<group>"; };
+		843A00E41EC58C410052EED4 /* VisitLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VisitLocationManager.swift; sourceTree = "<group>"; };
+		843A00E51EC58C410052EED4 /* VisitLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VisitLogger.swift; sourceTree = "<group>"; };
+		846FE97D1EC14BB200EEE873 /* MKPolylineZoom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MKPolylineZoom.swift; sourceTree = "<group>"; };
+		846FE9801EC14C6100EEE873 /* IVBezierPathRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IVBezierPathRenderer.h; sourceTree = "<group>"; };
+		846FE9811EC14C6100EEE873 /* IVBezierPathRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IVBezierPathRenderer.m; sourceTree = "<group>"; };
+		846FE9821EC14C6100EEE873 /* UIBezierPath+GuidedPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBezierPath+GuidedPath.h"; sourceTree = "<group>"; };
+		846FE9831EC14C6100EEE873 /* UIBezierPath+GuidedPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIBezierPath+GuidedPath.m"; sourceTree = "<group>"; };
+		846FE9861EC14D2500EEE873 /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		847E3E561EBC1AD400C16905 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
-		847E3E5A1EBC1CEA00C16905 /* LocationFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationFilter.swift; sourceTree = "<group>"; };
-		847E3E601EBC1E4100C16905 /* MotionActivityService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MotionActivityService.swift; sourceTree = "<group>"; };
+		847E3E5A1EBC1CEA00C16905 /* LocationFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationFilter.swift; path = ../LocationFilter.swift; sourceTree = "<group>"; };
+		847E3E601EBC1E4100C16905 /* MotionActivityService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MotionActivityService.swift; path = ../MotionActivityService.swift; sourceTree = "<group>"; };
 		847E3E631EBC1E7000C16905 /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		847E3E641EBC1E7000C16905 /* LocationCluster.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationCluster.swift; sourceTree = "<group>"; };
 		847E3E651EBC1E7000C16905 /* Visit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Visit.swift; sourceTree = "<group>"; };
 		847E3E691EBC1E8E00C16905 /* MapAnnotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapAnnotation.swift; sourceTree = "<group>"; };
 		847E3E6B1EBC1F0200C16905 /* Activity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
-		847E3E6D1EBC206800C16905 /* TrackingService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackingService.swift; sourceTree = "<group>"; };
+		847E3E6D1EBC206800C16905 /* TrackingService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TrackingService.swift; path = ../TrackingService.swift; sourceTree = "<group>"; };
 		847E3E6F1EBC20EF00C16905 /* AppUserDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppUserDefaults.swift; sourceTree = "<group>"; };
 		84AFA45B1E8F7B9100E130C2 /* TrackingLocation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TrackingLocation.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84AFA45E1E8F7B9100E130C2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -77,19 +76,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		847E3E451EBC19A600C16905 /* Classes */ = {
+		843A00E21EC58C410052EED4 /* Tracker */ = {
 			isa = PBXGroup;
 			children = (
-				847E3E461EBC19A600C16905 /* BackgroundLocationCache.swift */,
-				847E3E471EBC19A600C16905 /* BackgroundLocationManager.swift */,
-				847E3E481EBC19A600C16905 /* BackgroundTrackable.swift */,
-				847E3E491EBC19A600C16905 /* CLLocationCoordinate2D+Distance.swift */,
-				847E3E4A1EBC19A600C16905 /* Result.swift */,
-				847E3E4B1EBC19A600C16905 /* TrackingLocationManager.swift */,
-				847E3E4C1EBC19A600C16905 /* VisitLocationManager.swift */,
-				847E3E4D1EBC19A600C16905 /* VisitLogger.swift */,
+				847E3E5A1EBC1CEA00C16905 /* LocationFilter.swift */,
+				847E3E601EBC1E4100C16905 /* MotionActivityService.swift */,
+				847E3E6D1EBC206800C16905 /* TrackingService.swift */,
+				843A00E31EC58C410052EED4 /* TrackingLocationManager.swift */,
+				843A00E41EC58C410052EED4 /* VisitLocationManager.swift */,
+				843A00E51EC58C410052EED4 /* VisitLogger.swift */,
 			);
-			path = Classes;
+			path = Tracker;
+			sourceTree = "<group>";
+		};
+		846FE97F1EC14C6100EEE873 /* IVBezierPathRenderer */ = {
+			isa = PBXGroup;
+			children = (
+				846FE9801EC14C6100EEE873 /* IVBezierPathRenderer.h */,
+				846FE9811EC14C6100EEE873 /* IVBezierPathRenderer.m */,
+				846FE9821EC14C6100EEE873 /* UIBezierPath+GuidedPath.h */,
+				846FE9831EC14C6100EEE873 /* UIBezierPath+GuidedPath.m */,
+			);
+			path = IVBezierPathRenderer;
 			sourceTree = "<group>";
 		};
 		847E3E621EBC1E7000C16905 /* Model */ = {
@@ -100,6 +108,7 @@
 				847E3E641EBC1E7000C16905 /* LocationCluster.swift */,
 				847E3E651EBC1E7000C16905 /* Visit.swift */,
 				847E3E6B1EBC1F0200C16905 /* Activity.swift */,
+				846FE97D1EC14BB200EEE873 /* MKPolylineZoom.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -133,6 +142,7 @@
 				84AFA4651E8F7B9200E130C2 /* Assets.xcassets */,
 				84AFA4671E8F7B9200E130C2 /* LaunchScreen.storyboard */,
 				84AFA46A1E8F7B9200E130C2 /* Info.plist */,
+				846FE9861EC14D2500EEE873 /* Bridging-Header.h */,
 			);
 			path = TrackingLocation;
 			sourceTree = "<group>";
@@ -140,13 +150,11 @@
 		84AFA4701E8F7BB000E130C2 /* SwiftBackgroundLocation */ = {
 			isa = PBXGroup;
 			children = (
+				846FE97F1EC14C6100EEE873 /* IVBezierPathRenderer */,
 				847E3E6F1EBC20EF00C16905 /* AppUserDefaults.swift */,
-				847E3E6D1EBC206800C16905 /* TrackingService.swift */,
-				847E3E5A1EBC1CEA00C16905 /* LocationFilter.swift */,
-				847E3E601EBC1E4100C16905 /* MotionActivityService.swift */,
 				847E3E561EBC1AD400C16905 /* Config.swift */,
+				843A00E21EC58C410052EED4 /* Tracker */,
 				847E3E621EBC1E7000C16905 /* Model */,
-				847E3E451EBC19A600C16905 /* Classes */,
 			);
 			name = SwiftBackgroundLocation;
 			path = TrackingLocation/SwiftBackgroundLocation;
@@ -225,29 +233,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				843A00E71EC58C410052EED4 /* VisitLocationManager.swift in Sources */,
+				846FE97E1EC14BB200EEE873 /* MKPolylineZoom.swift in Sources */,
 				84AFA4611E8F7B9100E130C2 /* ViewController.swift in Sources */,
 				84AFA48A1E8F7C4D00E130C2 /* Points+Hermite.swift in Sources */,
 				847E3E6E1EBC206800C16905 /* TrackingService.swift in Sources */,
 				847E3E571EBC1AD400C16905 /* Config.swift in Sources */,
-				847E3E501EBC19A600C16905 /* BackgroundTrackable.swift in Sources */,
 				847E3E661EBC1E7000C16905 /* Location.swift in Sources */,
-				847E3E541EBC19A600C16905 /* VisitLocationManager.swift in Sources */,
+				846FE9841EC14C6100EEE873 /* IVBezierPathRenderer.m in Sources */,
 				847E3E611EBC1E4100C16905 /* MotionActivityService.swift in Sources */,
+				846FE9851EC14C6100EEE873 /* UIBezierPath+GuidedPath.m in Sources */,
 				847E3E671EBC1E7000C16905 /* LocationCluster.swift in Sources */,
 				84AFA45F1E8F7B9100E130C2 /* AppDelegate.swift in Sources */,
 				847E3E6C1EBC1F0200C16905 /* Activity.swift in Sources */,
-				847E3E4E1EBC19A600C16905 /* BackgroundLocationCache.swift in Sources */,
 				847E3E5B1EBC1CEA00C16905 /* LocationFilter.swift in Sources */,
+				843A00E81EC58C410052EED4 /* VisitLogger.swift in Sources */,
 				847E3E6A1EBC1E8E00C16905 /* MapAnnotation.swift in Sources */,
 				847E3E701EBC20EF00C16905 /* AppUserDefaults.swift in Sources */,
 				84AFA4891E8F7C4D00E130C2 /* LocationLogger.swift in Sources */,
-				847E3E551EBC19A600C16905 /* VisitLogger.swift in Sources */,
 				847E3E681EBC1E7000C16905 /* Visit.swift in Sources */,
-				847E3E531EBC19A600C16905 /* TrackingLocationManager.swift in Sources */,
-				847E3E4F1EBC19A600C16905 /* BackgroundLocationManager.swift in Sources */,
-				847E3E511EBC19A600C16905 /* CLLocationCoordinate2D+Distance.swift in Sources */,
+				843A00E61EC58C410052EED4 /* TrackingLocationManager.swift in Sources */,
 				84AFA4861E8F7C2700E130C2 /* BackgroundDebug.swift in Sources */,
-				847E3E521EBC19A600C16905 /* Result.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -374,6 +380,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "jp.r-up.PushListSample";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "TrackingLocation/Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -388,6 +395,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "jp.r-up.PushListSample";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "TrackingLocation/Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

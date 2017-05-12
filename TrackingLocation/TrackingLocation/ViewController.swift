@@ -7,8 +7,8 @@ class ViewController: UIViewController {
     
     var circles: [MKCircle] = []
     
-    var currentPolyline: MKPolyline?
-    var currentBackgroundPolyline: MKPolyline?
+    var currentPolyline: MKPolylineZoom?
+    var currentBackgroundPolyline: MKPolylineZoom?
     
     var locations: [Location] = []
     var backgroundLocations: [Location] = []
@@ -64,9 +64,9 @@ class ViewController: UIViewController {
         mapView.removeOverlays(mapView.overlays)
     }
     
-    func polyline(coords: [CLLocationCoordinate2D], title:String) -> MKPolyline {
+    func polyline(coords: [CLLocationCoordinate2D], title:String) -> MKPolylineZoom {
         
-        let polyline = MKPolyline(coordinates: coords, count: coords.count)
+        let polyline = MKPolylineZoom(coordinates: coords, count: coords.count)
         polyline.title = title
         
         return polyline
@@ -126,7 +126,7 @@ extension ViewController : TrackingServiceDelegate {
             self.circles.forEach({ circle in
                 self.mapView.remove(circle)
             })
-            let circle = MKCircle(center: location.coordinate, radius: BackgroundLocationManager.RegionConfig.regionRadius)
+            let circle = MKCircle(center: location.coordinate, radius: Config.LocationService.regionRadius)
             circle.title = "regionPlanned"
             self.mapView.add(circle)
             self.circles.append(circle)
@@ -165,10 +165,10 @@ extension ViewController: MKMapViewDelegate {
         
         let isRegion = overlay.title ?? "" == "regions"
         
-        let renderer = MKPolylineRenderer(overlay: overlay)
+        let renderer = IVBezierPathRenderer(overlay: overlay) //curve polyline
         renderer.strokeColor = isRegion ? UIColor.red.withAlphaComponent(0.8) : UIColor.blue.withAlphaComponent(0.8)
         renderer.lineWidth = isRegion ? 8.0 : 2.0
-        
+        renderer.tension = 2.5 // default: 4
         return renderer
     }
     

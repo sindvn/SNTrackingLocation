@@ -1,6 +1,15 @@
 import CoreLocation
 
+public enum Result<T> {
+    case Success(T)
+    case Error(Error)
+}
+
 public typealias LocationListener = (Result<CLLocation>) -> ()
+
+protocol TrackingLocationManagerDelegate: class {
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus)
+}
 
 final public class TrackingLocationManager: NSObject {
     
@@ -14,16 +23,17 @@ final public class TrackingLocationManager: NSObject {
     }()
     
     lazy var locationManager: CLLocationManager = {
-        let manager = CLLocationManager()
-        manager.distanceFilter = kCLDistanceFilterNone
-        manager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        let locationManager = CLLocationManager()
+        locationManager.distanceFilter = kCLDistanceFilterNone
+        locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         
-        manager.requestAlwaysAuthorization()
-        manager.allowsBackgroundLocationUpdates = true
-        manager.pausesLocationUpdatesAutomatically = false
-        return manager
+        locationManager.requestAlwaysAuthorization()
+        locationManager.allowsBackgroundLocationUpdates = true
+        locationManager.pausesLocationUpdatesAutomatically = false
+        return locationManager
     }()
     
+    weak var delegate: TrackingLocationManagerDelegate?
     
     fileprivate var listener: LocationListener?
     
@@ -76,18 +86,17 @@ extension TrackingLocationManager: CLLocationManagerDelegate {
         
         if manager == significantLocationManager {
             locationManager.requestLocation()
-        } else if (location.horizontalAccuracy < Config.LocationService.maxHorizontalAccuracy && Date().timeIntervalSince(location.timestamp) < Config.LocationService.minLocationTimestampFromNow){
+        } else if (location.horizontalAccuracy < Config.LocationService.maxHorizontalAccuracy
+            && Date().timeIntervalSince(location.timestamp) < Config.LocationService.minLocationTimestampFromNow ){
             listener?(Result.Success(location))
-        }
-    }
-    
-    public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        if status == .authorizedAlways || status == .authorizedWhenInUse {
-            self.setAlwaysUpdateLocation()
         }
     }
     
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error)
+    }
+    
+    public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        delegate?.locationManager(manager, didChangeAuthorization: status)
     }
 }

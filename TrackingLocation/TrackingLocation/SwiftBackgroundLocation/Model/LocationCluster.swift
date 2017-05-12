@@ -37,6 +37,7 @@ class LocationCluster {
         else if numberOfLocations == 1 {
             result = locations[0]
             result?.density = 1
+            result?.accuracy = result?.horizontalAccuracy ?? 0
         }
         else {
             if let arrivalTime = self.arrivalTime {
@@ -47,8 +48,8 @@ class LocationCluster {
                 
                 // if locations contain any arrival or departure
                 result?.hasEvent = self.hasEvent
-                result?.density = numberOfLocations
                 result?.accuracy = self.accuracy
+                result?.density = numberOfLocations
                 
                 if locations.contains(where: { $0.transport == "airplane" }) {
                     result?.transport = "airplane"
@@ -60,7 +61,7 @@ class LocationCluster {
         }
         
         _location = result
-
+        
         return result
     }
     
@@ -195,7 +196,10 @@ class LocationCluster {
     }
     
     var accuracy: Double {
-        return locations.min { $0.horizontalAccuracy < $1.horizontalAccuracy }?.horizontalAccuracy ?? 0.0
+        if let min = locations.min(by: { $0.horizontalAccuracy < $1.horizontalAccuracy }) {
+            return min.horizontalAccuracy
+        }
+        return 0
     }
     
     init() {

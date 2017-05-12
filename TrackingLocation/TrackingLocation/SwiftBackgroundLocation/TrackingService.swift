@@ -80,10 +80,6 @@ class TrackingService : NSObject {
         locationsTracking.removeAll()
         self.visitLocationManager.cleanData()
     }
-    
-    func startTrackingBackgroundLocation() {
-        self.visitLocationManager.startTrackingBackgroundLocation()
-    }
    
     fileprivate func recordLocation(uuid : String, location: CLLocation, arrivalTime: Date? = nil, departureTime : Date? = nil) {
         var activityTypeDescription: String?
